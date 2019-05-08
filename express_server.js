@@ -43,16 +43,14 @@ app.post("/urls", (req, res) => {
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     console.log('new db', urlDatabase)
-    res.redirect(`/urls/${shortURL}`);         
+    res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code      
 });
 
-//Looking 
 app.get("/u/:shortURL", (req, res) => {
     //const shortURL = req.params.shortURL;
     const longURL = urlDatabase[req.params.shortURL]
     res.redirect(longURL);
 });
-
 
 //A
 app.get("/urls/new", (req, res) => {
@@ -76,6 +74,7 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
+    delete req.params.shortURL;
     res.redirect("urls_index");
 })
 

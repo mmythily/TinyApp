@@ -10,19 +10,17 @@
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include partials/_header %>
+  <% include partials/_nav %>
     <!-- Add EJS code here
     urls: urlDatabase -->
     
     <h2> A list of the Urls </h2>
-    <ul>
       <% for(var shortURL in urls){ %> 
         <div> <%= shortURL %> <span> : </span> <%= urls[shortURL] %>  
-          <form method="POST" action="/urls/delete">
+          <form method="POST" action="/urls/<%= shortURL %>/delete">
+            <button type="delete" class="btn btn-danger">Delete</button>
+          </form>
         </div>
-        
       <% }%>
-
-  </ul>
-  </form>
 </body>
 </html>
