@@ -74,8 +74,8 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
-    delete req.params.shortURL;
-    res.redirect("urls_index");
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
 })
 
 app.listen(PORT, () => {
