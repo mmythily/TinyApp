@@ -43,12 +43,13 @@ app.post("/urls", (req, res) => {
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     console.log('new db', urlDatabase)
-    res.send(`Awesome! The machine generated ${shortURL} for ${longURL}.`);         
+    res.redirect(`/urls/${shortURL}`);         
 });
 
 //Looking 
 app.get("/u/:shortURL", (req, res) => {
-    // const longURL = ...
+    //const shortURL = req.params.shortURL;
+    const longURL = urlDatabase[req.params.shortURL]
     res.redirect(longURL);
 });
 
