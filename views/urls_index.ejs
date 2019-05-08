@@ -9,6 +9,15 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
+  <% include partials/_header %>
+    <!-- Add EJS code here
+    urls: urlDatabase -->
+    
+    <h2> A list of the Urls </h2>
+    <ul>
+      <% for(var shortURL in urls){ %> 
+        <div> <%= shortURL %> <span> : </span> <%= urls[shortURL] %></div>
+      <% }%>
+  </ul>
 </body>
 </html>

@@ -35,13 +35,14 @@ Connection: keep-alive
 */
 
 //Rendering with EJS Template Engine and sending data to urls_index page
-app.get("urls", (req, res) => {
-    let templateVars = { urls: urlDatabase };
+app.get("/urls", (req, res) => {
+    let templateVars = { urls: urlDatabase};
+    //const urls = templateVars.urls
     res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-    let templateVars = { shortURL: req.params.shortURL, longURL: /* What goes here? */ };
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
     res.render("urls_show", templateVars);
 });
 
