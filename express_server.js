@@ -20,24 +20,15 @@ app.get("/", (req, res) => {
 });
 
 
-//Added Routes and endpoints
-// app.get("/urls.json", (req, res) => {
-    //     res.json(urlDatabase);
-    // });
-    
-    // app.get("/hello", (req, res) => {
-        //     res.send("<html><body>Hello <b>World</b></body></html>\n");
-        // }); 
-        //When curl -i http://localhost:8080/hello
-        /*Response: 
-        HTTP/1.1 200 OK
-        X-Powered-By: Express
-        Content-Type: text/html; charset=utf-8
-        Content-Length: 45
-        ETag: W/"2d-+kq4PwugtS0rt17Ooq6yKzvojSE"
-        Date: Tue, 07 May 2019 23:02:56 GMT
-Connection: keep-alive
-*/
+function generateRandomString(randomString) {
+    var randomString = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return randomString;
+}
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
