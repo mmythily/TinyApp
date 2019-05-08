@@ -20,15 +20,7 @@ app.get("/", (req, res) => {
 });
 
 
-function generateRandomString(randomString) {
-    var randomString = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return randomString;
-}
+
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
@@ -37,10 +29,33 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
 });
 
+function generateRandomString (randomString) {
+    const randomString = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return randomString;
+}
 app.post("/urls", (req, res) => {
+
     console.log(req.body);  // Log the POST request body to the console
-    res.send("Ok");         // Respond with 'Ok' (we will replace this)
-  });
+    const shortURL = generateRandomString(6);
+    const longURL = input.longURL;
+    urlDatabase[shortURL] = longURL;
+    res.send(`Awesome! The machine generated ${shortURL} for ${longURL}.`);         
+});
+
+app.get("/u/:shortURL", (req, res) => {
+    // const longURL = ...
+    res.redirect(longURL);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+    // const longURL = ...
+    res.redirect(longURL);
+});
 
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
@@ -53,6 +68,10 @@ app.get("/urls/:shortURL", (req, res) => {
     };
     res.render("urls_show", templateVars);
 });
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+    res.redirect("urls_index");
+})
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
