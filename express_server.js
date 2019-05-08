@@ -20,8 +20,6 @@ app.get("/", (req, res) => {
 });
 
 
-
-
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
     let templateVars = { urls: urlDatabase };
@@ -29,38 +27,39 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
 });
 
-function generateRandomString (randomString) {
-    const randomString = '';
+function generateRandomString(strLength) {
+    let randomString = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
+    for ( let i = 0; i < strLength; i++ ) {
         randomString += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return randomString;
 }
-app.post("/urls", (req, res) => {
 
-    console.log(req.body);  // Log the POST request body to the console
+app.post("/urls", (req, res) => {
+    console.log('post /urls', req.body);  // Log the POST request body to the console
     const shortURL = generateRandomString(6);
-    const longURL = input.longURL;
+    const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
+    console.log('new db', urlDatabase)
     res.send(`Awesome! The machine generated ${shortURL} for ${longURL}.`);         
 });
 
+//Looking 
 app.get("/u/:shortURL", (req, res) => {
     // const longURL = ...
     res.redirect(longURL);
 });
 
-app.get("/u/:shortURL", (req, res) => {
-    // const longURL = ...
-    res.redirect(longURL);
-});
 
+//A
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
 
+
+//Accessing current record
 app.get("/urls/:shortURL", (req, res) => {
     let templateVars = { 
         shortURL: req.params.shortURL, 
@@ -69,6 +68,12 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
 });
 
+//Updating record = POST route that updates a URL resource; POST /urls/:id
+app.post("/urls/:shortURL", (req, res) => {
+
+})
+
+//Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect("urls_index");
 })
