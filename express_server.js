@@ -1,8 +1,13 @@
 const express = require('express');
 const app = express();
+
+//body-parser library will convert the request body from a Buffer into string that we can read. 
+//It will then add the data to the req(request) object under the key body.
+const bodyParser = require("body-parser");
 const PORT = 8080;
 
 app.set("view engine", "ejs")
+app.use(bodyParser.urlencoded({extended: true}));
 
 const urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
@@ -36,13 +41,20 @@ Connection: keep-alive
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
-    let templateVars = { urls: urlDatabase};
+    let templateVars = { urls: urlDatabase };
     //const urls = templateVars.urls
     res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+    res.render("urls_new");
+});
+
 app.get("/urls/:shortURL", (req, res) => {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+    let templateVars = { 
+        shortURL: req.params.shortURL, 
+        longURL: urlDatabase[req.params.shortURL] 
+    };
     res.render("urls_show", templateVars);
 });
 
