@@ -11,12 +11,16 @@
 <body style="font-size:20px; padding:50px;">
     <% include partials/_header %>
     <% include partials/_nav %>
-  <h1> Tiny App - URL Shortener</h1> <br>
     <!-- Add EJS code here
     urls: urlDatabase -->
     
-    <h4> TinyURL for <%= longURL %> </h4> 
-    <h5> /<%= shortURL %>  </h5>
+    <h4> ShortURL: <%= shortURL %> </h4> 
+    <form method="post" action = "/urls/<%=shortURL%>" >
+        <input class="form-control" type="text" name="longURL" 
+        placeholder="<%=longURL%>/" style="width: 500px; margin: 1em">  
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
     
   </ul>
 </body>

@@ -43,7 +43,7 @@ app.post("/urls", (req, res) => {
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     console.log('new db', urlDatabase)
-    res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code      
+    res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code  
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -68,8 +68,12 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 //Updating record = POST route that updates a URL resource; POST /urls/:id
-app.post("/urls/:shortURL", (req, res) => {
+app.post("/urls/:id", (req, res) => {
+    const shortURL = req.params.id;
 
+    urlDatabase[shortURL] = req.body.longURL;
+    console.log(urlDatabase)
+    res.redirect("/urls")
 })
 
 //Deleting record

@@ -16,10 +16,12 @@
     
     <h2> A list of the Urls </h2>
       <% for(var shortURL in urls){ %> 
-        <div> <%= shortURL %> <span> : </span> <%= urls[shortURL] %>  
+        <div> <%= shortURL %> <span> : </span> <%= urls[shortURL] %> 
+
           <form method="POST" action="/urls/<%= shortURL %>/delete">
+                    <a href="/urls/<%= shortURL %>"> Edit </a>
             <button type="delete" class="btn btn-danger">Delete</button>
-          </form>
+          </form> 
         </div>
       <% }%>
 </body>
