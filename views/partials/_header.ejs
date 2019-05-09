@@ -1,6 +1,15 @@
 <h1 class="p-3 mb-2 bg-success text-white"> Tiny App  -  URL Shortener </h1>
 
+<% if (!locals.username) {%>
 <form action="/login" method="POST">
     Username: <input name="username" type="text" required> 
     <button type="submit"> Sign in </button>
 </form>
+
+<% } else {%>
+<form action="/logout" method="POST">
+You are logged in as: <%= locals.username %>
+<button type="submit"> Logout </button>
+</form>
+
+<% } %>
