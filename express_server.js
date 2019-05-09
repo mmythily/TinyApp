@@ -18,22 +18,53 @@ const urlDatabase = {
 
 const users = { 
     "userRandomID": {
-      id: "userRandomID", 
-      email: "user@example.com", 
-      password: "purple-monkey-dinosaur"
+        id: "userRandomID", 
+        email: "user@example.com", 
+        password: "purple" //"purple-monkey-dinosaur"
     },
-   "user2RandomID": {
-      id: "user2RandomID", 
-      email: "user2@example.com", 
-      password: "dishwasher-funk"
+    "user2RandomID": {
+        id: "user2RandomID", 
+        email: "user2@example.com", 
+        password: "funk" //"dish-washer-funk"
     }
-  }
+}
 
-    //registers a handler on the root path, "/".
+//registers a handler on the root path, "/".
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
 
+// get/register endpoint
+app.get('/register', (req, res) => {
+    res.render("register");
+});
+
+
+app.post('/register', (req, res) => {
+    const user_id = `user${generateRandomString(3)}`
+    let newUser = {
+        id : user_id,
+        email : req.body.email,
+        password : req.body.password
+    };
+    users[user_id] = newUser;
+    res.cookie('user_id', user_id)
+    console.log(users);
+    res.redirect("/urls");
+});
+
+//Working with cookies
+app.post('/login', (req, res) => {
+    console.log(req.body)
+    const username = req.body.username;
+    res.cookie('username', username);
+    res.redirect("/urls");
+});
+
+app.post('/logout', (req, res) => {
+    res.clearCookie('username');
+    res.redirect("/urls");
+});
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
@@ -64,12 +95,6 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code  
 });
 
-app.get("/u/:shortURL", (req, res) => {
-    //const shortURL = req.params.shortURL;
-    const longURL = urlDatabase[req.params.shortURL]
-    res.redirect(longURL);
-});
-
 
 app.get("/urls/new", (req, res) => {
     let tempData = { 
@@ -93,28 +118,20 @@ app.get("/urls/:shortURL", (req, res) => {
 //Updating record = POST route that updates a URL resource; POST /urls/:id
 app.post("/urls/:id", (req, res) => {
     const shortURL = req.params.id;
-
     urlDatabase[shortURL] = req.body.longURL;
     console.log(urlDatabase)
     res.redirect("/urls")
 });
 
+app.get("/u/:shortURL", (req, res) => {
+    //const shortURL = req.params.shortURL;
+    const longURL = urlDatabase[req.params.shortURL]
+    res.redirect(longURL);
+});
+
 //Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
-    res.redirect("/urls");
-});
-
-//Working with cookies
-app.post('/login', (req, res) => {
-    console.log(req.body)
-    const username = req.body.username;
-    res.cookie('username', username);
-    res.redirect("/urls");
-});
-
-app.post('/logout', (req, res) => {
-    res.clearCookie('username');
     res.redirect("/urls");
 });
 
