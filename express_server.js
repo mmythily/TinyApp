@@ -26,8 +26,25 @@ const users = {
         id: "user2RandomID", 
         email: "user2@example.com", 
         password: "funk" //"dish-washer-funk"
+    },
+    "user2RandomIC": {
+        id: "user2RandomID", 
+        email: "user3@example.com", 
+        password: "funk" //"dish-washer-funk"
     }
 }
+
+emailLookup = (checkEmail) => {
+    for (let key in users){
+        if (users[key].email == checkEmail ){
+            return true;
+        }
+    }
+    return false;
+}
+
+//console.log('does this email exist in the database?',  emailLookup("user3@eample.com"))
+
 
 //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
@@ -39,20 +56,16 @@ app.get('/register', (req, res) => {
     res.render("register");
 });
 
-var emailLookup = (email) => {
-
-    for (var key in users){
-        if (users[key].email == req.body.email){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-};
 
 app.post('/register', (req, res) => {
-    do{
+    const email = req.body.email;
+    const password = req.body.password;
+    if (emailLookup(email) == true){
+        res.status(400).send('400 Error! Email already exists. Go back and login');
+    } else if (!email || !password){
+        res.status(400).send('400 Error! Please enter a valid email and password');
+    }
+    else{
         const user_id = `user${generateRandomString(3)}`
         let newUser = {
             id : user_id,
@@ -64,7 +77,6 @@ app.post('/register', (req, res) => {
         console.log(users);
         res.redirect("/urls");
     }
-    while(emailLookup(email) == true)
 });
 
 //Working with cookies
