@@ -15,14 +15,25 @@
     urls: urlDatabase -->
     
     <h2> A list of the Urls </h2>
-      <% for(var shortURL in urls){ %> 
-        <div> <%= shortURL %> <span> : </span> <%= urls[shortURL] %> 
-
-          <form method="POST" action="/urls/<%= shortURL %>/delete">
-                    <a href="/urls/<%= shortURL %>"> Edit </a>
-            <button type="delete" class="btn btn-danger">Delete</button>
-          </form> 
-        </div>
-      <% }%>
+      <table class="table table-hover">
+        <thead> 
+          <tr>
+            <th> Tiny Url </th>
+            <th> Url </th>
+            <th> </th>
+            <th> </th>
+          </tr>
+        </thead>
+        <% for(var shortURL in urls){ %>
+          <tr>
+            <td> <%= shortURL %> </td> 
+            <td> <%= urls[shortURL] %> </td> 
+            <form method="POST" action="/urls/<%= shortURL %>/delete">
+            <td> <button>  <a href="/urls/<%= shortURL %>"> Edit </a> </button> </td>
+            <td> <button type="delete" class="btn btn-danger">Delete </button> </td>
+          </form>
+          </tr>
+        <% }%>
+      </table>
 </body>
 </html>

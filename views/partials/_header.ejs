@@ -1,15 +1,6 @@
-<h1 class="p-3 mb-2 bg-success text-white"> Tiny App    URL Shortener </h1>
+<h1 class="p-3 mb-2 bg-success text-white"> Tiny App  -  URL Shortener </h1>
 
-<% if (!username) {%>
-<form method="post" action="/login"> 
-    <label for="user"> Username : </label>
-    <input name="user" type="text" placeholder="Enter a username"> 
-    <button type="submit" class="btn btn-primary">Login</button>
+<form action="/login" method="POST">
+    Username: <input name="username" type="text"> 
+    <button name="sign-in" type="submit"> Sign in </button>
 </form>
-<% } 
-
-else { %>
-<label for="user"> Username : </label> 
-<label> <%= user %>
-<button type="submit" class="btn btn-primary">Logout</button>
-<% } %> 

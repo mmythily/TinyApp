@@ -16,6 +16,19 @@ const urlDatabase = {
     "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+    "userRandomID": {
+      id: "userRandomID", 
+      email: "user@example.com", 
+      password: "purple-monkey-dinosaur"
+    },
+   "user2RandomID": {
+      id: "user2RandomID", 
+      email: "user2@example.com", 
+      password: "dishwasher-funk"
+    }
+  }
+
     //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
     res.send("Hello!");
@@ -86,7 +99,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //Working with cookies
 app.post('/login', (req, res) => {
-    
+
     console.log(req.body)
     const username = req.body.user;
     res.cookie('user', username);
