@@ -17,7 +17,7 @@
     <h4> ShortURL: <%= shortURL %> </h4> 
     <form method="post" action = "/urls/<%=shortURL%>" >
         <input class="form-control" type="text" name="longURL" 
-        placeholder="<%=longURL%>/" style="width: 500px; margin: 1em">  
+        placeholder="<%=longURL%>/" style="width: 500px; margin: 1em" required>  
 
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
