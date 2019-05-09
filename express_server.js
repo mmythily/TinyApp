@@ -99,11 +99,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //Working with cookies
 app.post('/login', (req, res) => {
-
     console.log(req.body)
-    const username = req.body.user;
+    const username = req.body.username;
     res.cookie('user', username);
-    res.redirect("/urls", {});
+    res.redirect("/urls");
 })
 
 app.listen(PORT, () => {
