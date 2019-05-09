@@ -39,18 +39,32 @@ app.get('/register', (req, res) => {
     res.render("register");
 });
 
+var emailLookup = (email) => {
+
+    for (var key in users){
+        if (users[key].email == req.body.email){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
 
 app.post('/register', (req, res) => {
-    const user_id = `user${generateRandomString(3)}`
-    let newUser = {
-        id : user_id,
-        email : req.body.email,
-        password : req.body.password
-    };
-    users[user_id] = newUser;
-    res.cookie('user_id', user_id)
-    console.log(users);
-    res.redirect("/urls");
+    do{
+        const user_id = `user${generateRandomString(3)}`
+        let newUser = {
+            id : user_id,
+            email : req.body.email,
+            password : req.body.password
+        };
+        users[user_id] = newUser;
+        res.cookie('user_id', user_id)
+        console.log(users);
+        res.redirect("/urls");
+    }
+    while(emailLookup(email) == true)
 });
 
 //Working with cookies
