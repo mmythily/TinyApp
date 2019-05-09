@@ -1,13 +1,15 @@
 const express = require('express');
-const app = express();
+const cookieParser = require('cookie-parser')
 
 //body-parser library will convert the request body from a Buffer into string that we can read. 
 //It will then add the data to the req(request) object under the key body.
 const bodyParser = require("body-parser");
+const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs")
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 const urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
@@ -22,9 +24,9 @@ app.get("/", (req, res) => {
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
-    let templateVars = { urls: urlDatabase };
+    let tempData = { urls: urlDatabase };
     //const urls = templateVars.urls
-    res.render("urls_index", templateVars);
+    res.render("urls_index", tempData);
 });
 
 function generateRandomString(strLength) {
@@ -52,7 +54,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
 });
 
-//A
+
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
@@ -79,6 +81,14 @@ app.post("/urls/:id", (req, res) => {
 //Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+})
+
+//Working with cookies
+app.post('/login', (req, res) => {
+    console.log(req.body)
+    const username = req.body.user;
+    res.cookie('user', username);
     res.redirect("/urls");
 })
 
