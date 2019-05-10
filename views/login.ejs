@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Tiny App</title>
-</head>
-<body>
-    <h1 class="p-3 mb-2 bg-success text-white"> Tiny App  -  URL Shortener </h1>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" 
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>TinyApp</title>
+  </head>
+  <body style="font-size:20px; padding:50px;">
+  <h1 class="p-3 mb-2 bg-success text-white"> Tiny App  -  URL Shortener </h1>
+  
+    <form action="/login" method="POST">
+        <label for="email" > Email: </label>
+        <input type="email" name="email"> <br>
+        <label for="password"> Password: </label>
+        <input type="password" name="password">
+        <button type="submit"> Submit </button>
+    </form>
+  </body>
 </html>
