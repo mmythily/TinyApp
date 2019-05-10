@@ -79,6 +79,10 @@ app.post('/register', (req, res) => {
     }
 });
 
+app.get('/login', (req, res) => {
+    res.render("login");
+});
+
 //Working with cookies
 app.post('/login', (req, res) => {
     console.log(req.body)
@@ -94,12 +98,25 @@ app.post('/logout', (req, res) => {
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
+    console.log(res.cookies);
     let tempData = { 
-        user_id: req.cookies["user_id"],
-        urls: urlDatabase 
+        user_id: req.body["user_id"],
+        urls: urlDatabase, 
+        user : users[req.cookies.user_id]
     };
+    //: users[res.cookies.user_id] ? users[res.cookies.user_id] : 'test'
+    console.log(tempData);
+    // let user = users[req.body["user_id"]];
     //const urls = templateVars.urls
     res.render("urls_index", tempData);
+
+    // let userEmail = users[req.cookies["user_id"]].email;
+    // let tempData = { 
+    //     user_id: req.cookies["user_id"],
+    //     urls: urlDatabase,
+    // };
+    // //const urls = templateVars.urls
+    // res.render("urls_index", tempData, userEmail);
 });
 
 function generateRandomString(strLength) {

@@ -9,8 +9,8 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-  <% include partials/_header %>
-  <% include partials/_nav %>
+  <% include ./partials/_header %>
+  <% include ./partials/_nav %>
     <!-- Add EJS code here
     urls: urlDatabase -->
     
@@ -29,7 +29,8 @@
             <td> <%= shortURL %> </td> 
             <td> <%= urls[shortURL] %> </td> 
             <form method="POST" action="/urls/<%= shortURL %>/delete">
-            <td> <button class="btn btn-outline-primary">  <a href="/urls/<%= shortURL %>"> Edit </a> </button> </td>
+            <td> <button class="btn btn-outline-primary">  
+              <a href="/urls/<%= shortURL %>"> Edit </a> </button> </td>
             <td> <button type="delete" class="btn btn-danger"> Delete </button> </td>
           </form>
           </tr>
