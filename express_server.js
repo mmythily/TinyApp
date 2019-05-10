@@ -43,8 +43,6 @@ emailLookup = (checkEmail) => {
     return false;
 }
 
-//console.log('does this email exist in the database?',  emailLookup("user3@eample.com"))
-
 
 //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
@@ -74,7 +72,6 @@ app.post('/register', (req, res) => {
         };
         users[user_id] = newUser;
         res.cookie('user_id', user_id)
-        console.log(users);
         res.redirect("/urls");
     }
 });
@@ -85,7 +82,6 @@ app.get('/login', (req, res) => {
 
 //Working with cookies
 app.post('/login', (req, res) => {
-    console.log(req.body)
     const user_id = req.body.user_id;
     res.cookie('user_id', user_id);
     res.redirect("/urls");
@@ -98,25 +94,12 @@ app.post('/logout', (req, res) => {
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
-    console.log(res.cookies);
     let tempData = { 
         user_id: req.body["user_id"],
         urls: urlDatabase, 
         user : users[req.cookies.user_id]
     };
-    //: users[res.cookies.user_id] ? users[res.cookies.user_id] : 'test'
-    console.log(tempData);
-    // let user = users[req.body["user_id"]];
-    //const urls = templateVars.urls
     res.render("urls_index", tempData);
-
-    // let userEmail = users[req.cookies["user_id"]].email;
-    // let tempData = { 
-    //     user_id: req.cookies["user_id"],
-    //     urls: urlDatabase,
-    // };
-    // //const urls = templateVars.urls
-    // res.render("urls_index", tempData, userEmail);
 });
 
 function generateRandomString(strLength) {
@@ -130,11 +113,9 @@ function generateRandomString(strLength) {
 }
 
 app.post("/urls", (req, res) => {
-    console.log('post /urls', req.body);  // Log the POST request body to the console
     const shortURL = generateRandomString(6);
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
-    console.log('new db', urlDatabase)
     res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code  
 });
 
@@ -162,7 +143,6 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/:id", (req, res) => {
     const shortURL = req.params.id;
     urlDatabase[shortURL] = req.body.longURL;
-    console.log(urlDatabase)
     res.redirect("/urls")
 });
 
