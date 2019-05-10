@@ -82,20 +82,20 @@ app.post('/register', (req, res) => {
 //Working with cookies
 app.post('/login', (req, res) => {
     console.log(req.body)
-    const username = req.body.username;
-    res.cookie('username', username);
+    const user_id = req.body.user_id;
+    res.cookie('user_id', user_id);
     res.redirect("/urls");
 });
 
 app.post('/logout', (req, res) => {
-    res.clearCookie('username');
+    res.clearCookie('user_id');
     res.redirect("/urls");
 });
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
     let tempData = { 
-        username: req.cookies["username"],
+        user_id: req.cookies["user_id"],
         urls: urlDatabase 
     };
     //const urls = templateVars.urls
@@ -124,7 +124,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
     let tempData = { 
-        username: req.cookies["username"],
+        user_id: req.cookies["user_id"],
         urls: urlDatabase 
     };
     res.render("urls_new", tempData);
@@ -134,7 +134,7 @@ app.get("/urls/new", (req, res) => {
 //Accessing current record
 app.get("/urls/:shortURL", (req, res) => {
     let tempData = { 
-        username: req.cookies["username"],
+        user_id: req.cookies["user_id"],
         shortURL: req.params.shortURL, 
         longURL: urlDatabase[req.params.shortURL] 
     };
