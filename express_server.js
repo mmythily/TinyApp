@@ -151,7 +151,7 @@ app.get("/urls/new", (req, res) => {
         let tempData = { 
             user_id: req.cookies["user_id"],
             urls: urlDatabase,
-            user : users[req.cookies.user_id]
+            user: users[req.cookies.user_id]
         };
         res.render("urls_new", tempData);
     }
@@ -163,8 +163,8 @@ app.get("/urls/:shortURL", (req, res) => {
     let tempData = { 
         user_id: req.cookies["user_id"],
         shortURL: req.params.shortURL, 
-        longURL: urlDatabase[req.params.shortURL],
-        user : users[req.cookies.user_id]
+        longURL: urlDatabase[req.params.shortURL].longURL,
+        user : users[req.cookies.user_id].userID
     };
     res.render("urls_show", tempData);
 });
@@ -177,7 +177,7 @@ app.post("/urls/:id", (req, res) => {
     }
     else {
         const shortURL = req.params.id;
-        urlDatabase[shortURL] = req.body.longURL;
+        urlDatabase[shortURL].longURL = req.body.longURL;
         res.redirect("/urls")
     }
 });
