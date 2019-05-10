@@ -52,7 +52,6 @@ emailLookup = (checkEmail) => {
 }
 
 
-
 //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
     res.send("Hello! Welcome to Tiny App");
@@ -96,13 +95,6 @@ app.get('/login', (req, res) => {
     res.render("login");
 });
 
-/*
-Update the POST /login endpoint to lookup the email address (submitted via the login from) in the user object.
-We needed this same functionality in the register route; if you created a function for looking up users by their email in that step, you can use that function again here! Your code will be so DRY it can dance underwater without getting wet.
-If a user with that e-mail cannot be found, return a response with a 403 status code.
-If a user with that e-mail address is located, compare the password given in the form with the existing user's password. If it does not match, return a response with a 403 status code.
-If both checks pass, set the user_id cookie with the matching user's random ID, then redirect to /urls.
-*/
 app.post('/login', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -133,27 +125,36 @@ app.get("/urls", (req, res) => {
         urls: urlDatabase, 
         user: users[req.cookies.user_id]
     };
-    console.log(tempData)
     res.render("urls_index", tempData);
 });
 
 app.post("/urls", (req, res) => {
+    const user_id = req.cookies.user_id;
+    if (user_id === undefined){
+        res.status(403).send("Forbidden : 403 Error! Please log in to create short url")
+    } else {
     const shortURL = generateRandomString(6);
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     res.redirect(`/urls/${shortURL}`);
     //redirection is 301 status code  
+    }
 });
 
 
 app.get("/urls/new", (req, res) => {
-    let tempData = { 
-        user_id: req.cookies["user_id"],
-        urls: urlDatabase,
-        user : users[req.cookies.user_id]
-    };
-    console.log("Temp Database", tempData)
-    res.render("urls_new", tempData);
+    const user_id = req.cookies.user_id;
+    if (user_id === undefined){
+        res.status(403).send("Forbidden : 403 Error! Please log in to create short url")
+    }
+    else {
+        let tempData = { 
+            user_id: req.cookies["user_id"],
+            urls: urlDatabase,
+            user : users[req.cookies.user_id]
+        };
+        res.render("urls_new", tempData);
+    }
 });
 
 
