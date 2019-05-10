@@ -10,8 +10,8 @@ app.use(cookieParser());
 
 
 const urlDatabase = {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com"
+    "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "user2RandomID"},
+    "9sm5xK": { longURL: "http://www.google.com", userID: "userRandomID"}
 };
 
 const users = { 
@@ -171,9 +171,15 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Updating record = POST route that updates a URL resource; POST /urls/:id
 app.post("/urls/:id", (req, res) => {
-    const shortURL = req.params.id;
-    urlDatabase[shortURL] = req.body.longURL;
-    res.redirect("/urls")
+    const user_id = req.cookies.user_id;
+    if (user_id === undefined){
+        res.status(403).send("Forbidden : 403 Error! Please log in to edit short url")
+    }
+    else {
+        const shortURL = req.params.id;
+        urlDatabase[shortURL] = req.body.longURL;
+        res.redirect("/urls")
+    }
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -184,8 +190,14 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Deleting record
 app.post("/urls/:shortURL/delete", (req, res) => {
-    delete urlDatabase[req.params.shortURL];
-    res.redirect("/urls");
+    const user_id = req.cookies.user_id;
+    if (user_id === undefined){
+        res.status(403).send("Forbidden : 403 Error! Please log in to delete short url")
+    }
+    else {
+        delete urlDatabase[req.params.shortURL];
+        res.redirect("/urls");
+    }
 });
 
 app.listen(PORT, () => {
