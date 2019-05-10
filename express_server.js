@@ -44,21 +44,14 @@ generateRandomString = (strLength) => {
 
 emailLookup = (checkEmail) => {
     for (let key in users){
-        if (users[key].email == checkEmail ){
-            return true;
+        if (users[key].email === checkEmail ){
+            return users[key];
         }
     }
     return false;
 }
 
-passwordLookup = (checkPassword) => {
-    for (let key in users){
-        if (users[key].password == checkPassword ){
-            return true;
-        }
-    }
-    return false;
-}
+
 
 //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
@@ -111,31 +104,25 @@ If a user with that e-mail address is located, compare the password given in the
 If both checks pass, set the user_id cookie with the matching user's random ID, then redirect to /urls.
 */
 app.post('/login', (req, res) => {
-    const user_id = req.body.user_id;
     const email = req.body.email;
     const password = req.body.password;
-    
-    if (emailLookup(email) == false){
+    const user = emailLookup(email);
+    if (user === false){
         res.status(403).send('Forbidden : 403 Error! Email cannot be found');
     } 
-    else if (passwordLookup(password) == false){
-        res.status(403).send('Forbidden : 403 Error! You entered a wrong password. Try Again');
+    else if (user.password !== password){
+        res.status(403).send('Forbidden : 403 Error! You entered a wrong password for your email. Try Again');
     }
     else if (!email || !password){
         res.status(400).send('Bad Request : 400 Error! Please enter a valid email and password');
     }
     else { //emailLookup(email) == true
-        email = req.body.email;
-        user_id = req.body.user_id;
-        res.cookie('user_id', user_id);
+        res.cookie('user_id', user.id);
         res.redirect("/urls");
     }
 });
 
-
-
 app.post('/logout', (req, res) => {
-    
     res.clearCookie('user_id');
     res.redirect("/urls");
 });
@@ -150,12 +137,12 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", tempData);
 });
 
-
 app.post("/urls", (req, res) => {
     const shortURL = generateRandomString(6);
     const longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
-    res.redirect(`/urls/${shortURL}`);   //redirection is 301 status code  
+    res.redirect(`/urls/${shortURL}`);
+    //redirection is 301 status code  
 });
 
 
@@ -175,7 +162,8 @@ app.get("/urls/:shortURL", (req, res) => {
     let tempData = { 
         user_id: req.cookies["user_id"],
         shortURL: req.params.shortURL, 
-        longURL: urlDatabase[req.params.shortURL] 
+        longURL: urlDatabase[req.params.shortURL],
+        user : users[req.cookies.user_id]
     };
     res.render("urls_show", tempData);
 });
