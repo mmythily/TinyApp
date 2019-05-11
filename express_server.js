@@ -1,7 +1,9 @@
 const express = require('express');
+const app = express();
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
-const app = express();
+const bcrypt = require('bcrypt');
+
 const PORT = 8080;
 
 app.set("view engine", "ejs")
@@ -80,6 +82,11 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
+    //var salt = bcrypt.genSaltSync(saltRounds);
+    //var hash = bcrypt.hashSync(myPlaintextPassword, salt);
+    
+    const hashedPassword = bcrypt.hashSync(password, 10);
+     
     
     if (emailLookup(email) == true){
         res.status(400).send('400 Error! Email already exists. Go back and login');
