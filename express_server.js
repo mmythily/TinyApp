@@ -51,6 +51,15 @@ emailLookup = (checkEmail) => {
     return false;
 }
 
+urlsForUser = (id) => {
+    const urls = [];
+    for (let shortURL in urlDatabase){
+        if (urlDatabase[shortURL].userID === id){
+            urls[shortURL] = urlDatabase[shortURL];
+        }
+    }
+    return urls;
+ }
 
 //registers a handler on the root path, "/".
 app.get("/", (req, res) => {
@@ -121,9 +130,10 @@ app.post('/logout', (req, res) => {
 
 //Rendering with EJS Template Engine and sending data to urls_index page
 app.get("/urls", (req, res) => {
+    const userID = req.cookies.user_id;
     let tempData = { 
-        urls: urlDatabase, 
-        user: users[req.cookies.user_id]
+        urls: urlsForUser(userID), 
+        user: users[userID]
     };
     res.render("urls_index", tempData);
 });
