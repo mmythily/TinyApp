@@ -125,7 +125,7 @@ app.post('/login', (req, res) => {
 
 app.post('/logout', (req, res) => {
     res.clearCookie('user_id');
-    res.redirect("/urls");
+    res.redirect("/login");
 });
 
 //Rendering with EJS Template Engine and sending data to urls_index page
@@ -139,15 +139,15 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-    const user_id = req.cookies.user_id;
-    if (user_id === undefined){
+    const userID = req.cookies.user_id;
+    if (userID === undefined){
         res.status(403).send("Forbidden : 403 Error! Please log in to create short url")
     } else {
-    const shortURL = generateRandomString(6);
-    const longURL = req.body.longURL;
-    urlDatabase[shortURL] = longURL;
-    res.redirect(`/urls/${shortURL}`);
-    //redirection is 301 status code  
+        const shortURL = generateRandomString(6);
+        const longURL = req.body.longURL;
+        urlDatabase[shortURL] = { longURL, userID};
+        res.redirect(`/urls/${shortURL}`);
+        //redirection is 301 status code  
     }
 });
 
@@ -155,7 +155,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
     const user_id = req.cookies.user_id;
     if (user_id === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to create short url")
+        res.status(403).send("Forbidden : 403 Error! Please log in to create short url");
     }
     else {
         let tempData = { 
@@ -170,13 +170,18 @@ app.get("/urls/new", (req, res) => {
 
 //Accessing current record
 app.get("/urls/:shortURL", (req, res) => {
-    let tempData = { 
-        user_id: req.cookies["user_id"],
-        shortURL: req.params.shortURL, 
-        longURL: urlDatabase[req.params.shortURL].longURL,
-        user : users[req.cookies.user_id].userID
-    };
-    res.render("urls_show", tempData);
+    const user_id = req.cookies.user_id;
+    if (user_id === undefined){
+        res.status(403).send("Forbidden : 403 Error! Please log in to access your record")
+    } else {
+        let tempData = { 
+            user_id: req.cookies["user_id"],
+            shortURL: req.params.shortURL, 
+            longURL: urlDatabase[req.params.shortURL].longURL,
+            user : users[req.cookies.user_id].userID
+        };
+        res.render("urls_show", tempData);
+    }
 });
 
 //Updating record = POST route that updates a URL resource; POST /urls/:id
