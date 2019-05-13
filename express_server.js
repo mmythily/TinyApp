@@ -82,12 +82,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-    //var salt = bcrypt.genSaltSync(saltRounds);
-    //var hash = bcrypt.hashSync(myPlaintextPassword, salt);
-    
-    const hashedPassword = bcrypt.hashSync(password, 10);
      
-    
     if (emailLookup(email) == true){
         res.status(400).send('400 Error! Email already exists. Go back and login');
     } 
@@ -99,7 +94,7 @@ app.post('/register', (req, res) => {
         let newUser = {
             id : user_id,
             email : req.body.email,
-            password : req.body.password
+            password : bcrypt.hashSync(req.body.password, 10)
         };
         users[user_id] = newUser;
         res.cookie('user_id', user_id)
@@ -113,15 +108,18 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     const email = req.body.email;
-    const password = req.body.password;
+    const userlog = emailLookup(email);
+    //bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword); /
+    bcrypt.compareSync(req.body.password, userlog.password); 
     const user = emailLookup(email);
     if (user === false){
         res.status(403).send('Forbidden : 403 Error! Email cannot be found');
     } 
-    else if (user.password !== password){
+    //else if (user.password !== password){
+    else if (!bcrypt.compareSync(req.body.password, userlog.password)){
         res.status(403).send('Forbidden : 403 Error! You entered a wrong password for your email. Try Again');
     }
-    else if (!email || !password){
+    else if (!email || !req.body.password){
         res.status(400).send('Bad Request : 400 Error! Please enter a valid email and password');
     }
     else { //emailLookup(email) == true
