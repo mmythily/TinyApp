@@ -1,36 +1,42 @@
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser')
-const bodyParser = require("body-parser");
+
+const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session')
 
 const PORT = 8080;
 
-app.set("view engine", "ejs")
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+    name: 'session',
+    keys: ['brew'],
+    maxAge: 24 * 60 * 60 * 1000 //24 hours
+    // req.session.user_id : req.session.user_id
+}))
 
 
 const urlDatabase = {
-    "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "user2RandomID"},
-    "9sm5xK": { longURL: "http://www.google.com", userID: "userRandomID"}
+    'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userID: 'user2RandomID'},
+    '9sm5xK': { longURL: 'http://www.google.com', userID: 'userRandomID'}
 };
 
 const users = { 
-    "userRandomID": {
-        id: "userRandomID", 
-        email: "user@example.com", 
-        password: "purple" 
+    'userRandomID': {
+        id: 'userRandomID', 
+        email: 'user@example.com', 
+        password: 'purple' 
     },
-    "user2RandomID": {
-        id: "user2RandomID", 
-        email: "user2@example.com", 
-        password: "funk" 
+    'user2RandomID': {
+        id: 'user2RandomID', 
+        email: 'user2@example.com', 
+        password: 'funk' 
     },
-    "user2RandomIC": {
-        id: "user2RandomID", 
-        email: "user3@example.com", 
-        password: "punk" 
+    'user2RandomIC': {
+        id: 'user2RandomID', 
+        email: 'user3@example.com', 
+        password: 'punk' 
     }
 }
 
@@ -63,9 +69,14 @@ urlsForUser = (id) => {
     return urls;
  }
 
-//registers a handler on the root path, "/".
-app.get("/", (req, res) => {
-    res.send("Hello! Welcome to Tiny App");
+//registers a handler on the root path, '/', and redirects depending on whether user is logged
+app.get('/', (req, res) => {
+    if(req.session.user_id == true){
+        res.redirect('/urls');
+    }
+    else{
+        res.redirect('/register');
+    }
 });
 
 
@@ -73,9 +84,9 @@ app.get("/", (req, res) => {
 app.get('/register', (req, res) => {
     let tempData = { 
         urls: urlDatabase, 
-        user: users[req.cookies.user_id]
+        user: users[req.session.user_id]
     };
-    res.render("register", tempData);
+    res.render('register', tempData);
 });
 
 
@@ -97,56 +108,57 @@ app.post('/register', (req, res) => {
             password : bcrypt.hashSync(req.body.password, 10)
         };
         users[user_id] = newUser;
-        res.cookie('user_id', user_id)
-        res.redirect("/urls");
+        req.session['user_id'] = user_id;
+        res.redirect('/urls');
     }
 });
 
 app.get('/login', (req, res) => {
-    res.render("login");
+    res.render('login');
 });
 
 app.post('/login', (req, res) => {
     const email = req.body.email;
-    const userlog = emailLookup(email);
-    //bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword); /
-    bcrypt.compareSync(req.body.password, userlog.password); 
+    //const userlog = emailLookup(email);
+    //bcrypt.compareSync('purple-monkey-dinosaur', hashedPassword); /
+    //bcrypt.compareSync(req.body.password, userlog.password); 
     const user = emailLookup(email);
     if (user === false){
         res.status(403).send('Forbidden : 403 Error! Email cannot be found');
     } 
     //else if (user.password !== password){
-    else if (!bcrypt.compareSync(req.body.password, userlog.password)){
+    else if (!bcrypt.compareSync(req.body.password, user.password)){
         res.status(403).send('Forbidden : 403 Error! You entered a wrong password for your email. Try Again');
     }
     else if (!email || !req.body.password){
         res.status(400).send('Bad Request : 400 Error! Please enter a valid email and password');
     }
     else { //emailLookup(email) == true
-        res.cookie('user_id', user.id);
-        res.redirect("/urls");
+        req.session['user_id']= user.id;
+        res.redirect('/urls');
     }
 });
 
+//Destroy the session and return to login page
 app.post('/logout', (req, res) => {
-    res.clearCookie('user_id');
-    res.redirect("/login");
+    res.session = null;
+    res.redirect('/login');
 });
 
 //Rendering with EJS Template Engine and sending data to urls_index page
-app.get("/urls", (req, res) => {
-    const userID = req.cookies.user_id;
+app.get('/urls', (req, res) => {
+    const userID = req.session.user_id;
     let tempData = { 
         urls: urlsForUser(userID), 
         user: users[userID]
     };
-    res.render("urls_index", tempData);
+    res.render('urls_index', tempData);
 });
 
-app.post("/urls", (req, res) => {
-    const userID = req.cookies.user_id;
+app.post('/urls', (req, res) => {
+    const userID = req.session.user_id;
     if (userID === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to create short url")
+        res.status(403).send('Forbidden : 403 Error! Please log in to create short url')
     } else {
         const shortURL = generateRandomString(6);
         const longURL = req.body.longURL;
@@ -157,66 +169,78 @@ app.post("/urls", (req, res) => {
 });
 
 
-app.get("/urls/new", (req, res) => {
-    const user_id = req.cookies.user_id;
+app.get('/urls/new', (req, res) => {
+    const user_id = req.session.user_id;
     if (user_id === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to create short url");
+        res.status(403).send('Forbidden : 403 Error! Please log in to create short url');
     }
     else {
         let tempData = { 
-            user_id: req.cookies["user_id"],
+            user_id: req.session['user_id'],
             urls: urlDatabase,
-            user: users[req.cookies.user_id]
+            user: users[req.session.user_id]
         };
-        res.render("urls_new", tempData);
+        res.render('urls_new', tempData);
     }
 });
 
 
 //Accessing current record
-app.get("/urls/:shortURL", (req, res) => {
-    const user_id = req.cookies.user_id;
+app.get('/urls/:shortURL', (req, res) => {
+    const user_id = req.session.user_id;
     if (user_id === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to access your record")
+        res.status(403).send('Forbidden : 403 Error! Please log in to access your record')
     } else {
         let tempData = { 
-            user_id: req.cookies["user_id"],
+            user_id: req.session['user_id'],
             shortURL: req.params.shortURL, 
             longURL: urlDatabase[req.params.shortURL].longURL,
-            user : users[req.cookies.user_id].userID
+            user : users[req.session.user_id].userID
         };
-        res.render("urls_show", tempData);
+        res.render('urls_show', tempData);
     }
 });
 
 //Updating record = POST route that updates a URL resource; POST /urls/:id
-app.post("/urls/:id", (req, res) => {
-    const user_id = req.cookies.user_id;
+app.post('/urls/:id', (req, res) => {
+    const user_id = req.session.user_id;
+    const shortURL = req.params.id;
+
     if (user_id === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to edit short url")
-    }
-    else {
-        const shortURL = req.params.id;
+        res.status(403).send('Forbidden : 403 Error! Please log in to edit short url')
+    } else if (user_id === urlDatabase[shortURL].userID){
+        //condition implement when the current user can edit
         urlDatabase[shortURL].longURL = req.body.longURL;
-        res.redirect("/urls")
+        res.redirect('/urls')
+    } else {
+        res.redirect('/login')
     }
 });
 
-app.get("/u/:shortURL", (req, res) => {
+// /days/w03d3/activities/63
+// /days/:id/activities/:activity_id
+// /days/1/activities/2
+// params: { id: 1, activity_id: 2}
+// Day.find(req.params.id)
+// Activity.find(req.params.activity_id)
+
+// /u/abc
+// { shortURL: 'abc' }
+app.get('/u/:shortURL', (req, res) => {
     //const shortURL = req.params.shortURL;
-    const longURL = urlDatabase[req.params.shortURL]
+    const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
 });
 
 //Deleting record
-app.post("/urls/:shortURL/delete", (req, res) => {
-    const user_id = req.cookies.user_id;
+app.post('/urls/:shortURL/delete', (req, res) => {
+    const user_id = req.session.user_id;
     if (user_id === undefined){
-        res.status(403).send("Forbidden : 403 Error! Please log in to delete short url")
+        res.status(403).send('Forbidden : 403 Error! Please log in to delete short url')
     }
     else {
         delete urlDatabase[req.params.shortURL];
-        res.redirect("/urls");
+        res.redirect('/urls');
     }
 });
 

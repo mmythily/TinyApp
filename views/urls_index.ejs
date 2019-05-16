@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css' integrity='sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS' crossorigin='anonymous'>
   <title>TinyApp</title>
 </head>
-<body style="font-size:20px; padding:50px;">
+<body style='font-size:20px; padding:50px;'>
   <% include ./partials/_header %>
   <% include ./partials/_nav %>
     <!-- Add EJS code here -->
     
     <h2> Your Personal URL Collection </h2>
-      <table class="table table-hover">
+      <table class='table table-hover'>
         <thead> 
           <tr>
             <th> Tiny Url </th>
@@ -27,10 +27,10 @@
           <tr>
             <td> <%= shortURL %> </td> 
             <td> <%= urls[shortURL].longURL %> </td> 
-            <form method="POST" action="/urls/<%= shortURL %>/delete">
-            <td> <button class="btn btn-outline-primary">  
-              <a href="/urls/<%= shortURL %>"> Edit </a> </button> </td>
-            <td> <button type="delete" class="btn btn-danger"> Delete </button> </td>
+            <form method='POST' action='/urls/<%= shortURL %>/delete'>
+            <td> <button class='btn btn-outline-primary'>  
+              <a href='/urls/<%= shortURL %>'> Edit </a> </button> </td>
+            <td> <button type='delete' class='btn btn-danger'> Delete </button> </td>
           </form>
           </tr>
         <% }%>

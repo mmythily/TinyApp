@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" 
-    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css' 
+    integrity='sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS' crossorigin='anonymous'>
 
     <title>New URL - TinyApp Example</title>
   </head>
 
-  <body style="font-size:20px; padding:50px;">
+  <body style='font-size:20px; padding:50px;'>
 
     <% include ./partials/_header %>
     <% include ./partials/_nav %>
@@ -20,16 +20,16 @@
 
     <%# form tag has two attributes: action (tells form which URL to submit) 
     and method (tell form which HTTP method to use when submitting the form) %>
-    <form class="form-inline" action="/urls" method="POST">
-      <div class="form-group mb-2">
-        <label class="p-3 mb-2 bg-dark text-white" for="longURL"> Generate a short URL :</label>
+    <form class='form-inline' action='/urls' method='POST'>
+      <div class='form-group mb-2'>
+        <label class='p-3 mb-2 bg-dark text-white' for='longURL'> Generate a short URL :</label>
         
         <%# name identifies the data ... adds the key longURL to the data 
         we'll be sending in the body of our POST request. %>
 
-        <input class="form-control" type="text" name="longURL" 
-        placeholder="http://"  style="width: 300px; margin: 1em" required>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <input class='form-control' type='text' name='longURL' 
+        placeholder='http://'  style='width: 300px; margin: 1em' required>
+        <button type='submit' class='btn btn-primary'>Submit</button>
       </div>
     </form>
   </body>
