@@ -27,3 +27,9 @@ https://web.compass.lighthouselabs.ca/projects/w2-url-shortener
 - cookie-parser (briefly)
 
 ## Final Product
+
+Here is the registration page
+<img src="./images/register.png">
+
+Here is the url collection 
+<img src="./images/urlcollection.png">

@@ -17,30 +17,8 @@ app.use(cookieSession({
 }))
 
 
-const urlDatabase = {
-    'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userID: 'user2RandomID'},
-    '9sm5xK': { longURL: 'http://www.google.com', userID: 'userRandomID'}
-};
 
-const users = { 
-    'userRandomID': {
-        id: 'userRandomID', 
-        email: 'user@example.com', 
-        password: 'purple' 
-    },
-    'user2RandomID': {
-        id: 'user2RandomID', 
-        email: 'user2@example.com', 
-        password: 'funk' 
-    },
-    'user2RandomIC': {
-        id: 'user2RandomID', 
-        email: 'user3@example.com', 
-        password: 'punk' 
-    }
-}
-
-generateRandomString = (strLength) => {
+const generateRandomString = (strLength) => {
     let randomString = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -50,7 +28,7 @@ generateRandomString = (strLength) => {
     return randomString;
 }
 
-emailLookup = (checkEmail) => {
+const emailLookup = (checkEmail) => {
     for (let key in users){
         if (users[key].email === checkEmail ){
             return users[key];
@@ -59,7 +37,7 @@ emailLookup = (checkEmail) => {
     return false;
 }
 
-urlsForUser = (id) => {
+const urlsForUser = (id) => {
     const urls = [];
     for (let shortURL in urlDatabase){
         if (urlDatabase[shortURL].userID === id){
@@ -69,18 +47,18 @@ urlsForUser = (id) => {
     return urls;
  }
 
-//registers a handler on the root path, '/', and redirects depending on whether user is logged
+//root path, which redirects to url list or login depending on whether user is logged in
 app.get('/', (req, res) => {
     if(req.session.user_id == true){
         res.redirect('/urls');
     }
     else{
-        res.redirect('/register');
+        res.redirect('/login');
     }
 });
 
 
-// get/register endpoint
+// get/register endpoint that renders registration page
 app.get('/register', (req, res) => {
     let tempData = { 
         urls: urlDatabase, 
@@ -89,7 +67,7 @@ app.get('/register', (req, res) => {
     res.render('register', tempData);
 });
 
-
+//Creates and authenticates a new user
 app.post('/register', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -113,27 +91,25 @@ app.post('/register', (req, res) => {
     }
 });
 
+//login page
 app.get('/login', (req, res) => {
     res.render('login');
 });
 
+//Authenticate a user based on their email and password and set a session cookie
 app.post('/login', (req, res) => {
     const email = req.body.email;
-    //const userlog = emailLookup(email);
-    //bcrypt.compareSync('purple-monkey-dinosaur', hashedPassword); /
-    //bcrypt.compareSync(req.body.password, userlog.password); 
     const user = emailLookup(email);
     if (user === false){
         res.status(403).send('Forbidden : 403 Error! Email cannot be found');
     } 
-    //else if (user.password !== password){
     else if (!bcrypt.compareSync(req.body.password, user.password)){
         res.status(403).send('Forbidden : 403 Error! You entered a wrong password for your email. Try Again');
     }
     else if (!email || !req.body.password){
         res.status(400).send('Bad Request : 400 Error! Please enter a valid email and password');
     }
-    else { //emailLookup(email) == true
+    else { 
         req.session['user_id']= user.id;
         res.redirect('/urls');
     }
@@ -155,9 +131,10 @@ app.get('/urls', (req, res) => {
     res.render('urls_index', tempData);
 });
 
+//Generate urls for associate it with the user
 app.post('/urls', (req, res) => {
     const userID = req.session.user_id;
-    if (userID === undefined){
+    if (!userID){
         res.status(403).send('Forbidden : 403 Error! Please log in to create short url')
     } else {
         const shortURL = generateRandomString(6);
@@ -168,10 +145,10 @@ app.post('/urls', (req, res) => {
     }
 });
 
-
+//Users can add and edit new urls
 app.get('/urls/new', (req, res) => {
     const user_id = req.session.user_id;
-    if (user_id === undefined){
+    if (!user_id){
         res.status(403).send('Forbidden : 403 Error! Please log in to create short url');
     }
     else {
@@ -184,18 +161,21 @@ app.get('/urls/new', (req, res) => {
     }
 });
 
-
 //Accessing current record
 app.get('/urls/:shortURL', (req, res) => {
     const user_id = req.session.user_id;
-    if (user_id === undefined){
+    if (!user_id) {
         res.status(403).send('Forbidden : 403 Error! Please log in to access your record')
-    } else {
+    } else if (!users[user_id]){
+        res.session = null;
+        res.redirect('/login')
+    }
+    else {
         let tempData = { 
             user_id: req.session['user_id'],
             shortURL: req.params.shortURL, 
             longURL: urlDatabase[req.params.shortURL].longURL,
-            user : users[req.session.user_id].userID
+            user : users[user_id].userID
         };
         res.render('urls_show', tempData);
     }
@@ -206,10 +186,9 @@ app.post('/urls/:id', (req, res) => {
     const user_id = req.session.user_id;
     const shortURL = req.params.id;
 
-    if (user_id === undefined){
+    if (!user_id){
         res.status(403).send('Forbidden : 403 Error! Please log in to edit short url')
     } else if (user_id === urlDatabase[shortURL].userID){
-        //condition implement when the current user can edit
         urlDatabase[shortURL].longURL = req.body.longURL;
         res.redirect('/urls')
     } else {
@@ -217,26 +196,17 @@ app.post('/urls/:id', (req, res) => {
     }
 });
 
-// /days/w03d3/activities/63
-// /days/:id/activities/:activity_id
-// /days/1/activities/2
-// params: { id: 1, activity_id: 2}
-// Day.find(req.params.id)
-// Activity.find(req.params.activity_id)
-
-// /u/abc
-// { shortURL: 'abc' }
+//Shows the longurl of the shorturl
 app.get('/u/:shortURL', (req, res) => {
-    //const shortURL = req.params.shortURL;
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
 });
 
-//Deleting record
+//Delete a record
 app.post('/urls/:shortURL/delete', (req, res) => {
     const user_id = req.session.user_id;
-    if (user_id === undefined){
-        res.status(403).send('Forbidden : 403 Error! Please log in to delete short url')
+    if (!user_id){
+        res.status(403).send('Forbidden : 403 Error! Please log in to delete short url');
     }
     else {
         delete urlDatabase[req.params.shortURL];
@@ -244,6 +214,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     }
 });
 
+
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}!`);
+    console.log(`App listening on port ${PORT}!`);
 });
