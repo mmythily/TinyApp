@@ -141,7 +141,6 @@ app.post('/urls', (req, res) => {
         const longURL = req.body.longURL;
         urlDatabase[shortURL] = { longURL, userID};
         res.redirect(`/urls/${shortURL}`);
-        //redirection is 301 status code  
     }
 });
 
