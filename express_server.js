@@ -16,7 +16,8 @@ app.use(cookieSession({
     // req.session.user_id : req.session.user_id
 }))
 
-
+var urlDatabase = {};
+var users = {};
 
 const generateRandomString = (strLength) => {
     let randomString = '';
